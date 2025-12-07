@@ -8,9 +8,10 @@ interface AnalysisDashboardProps {
   onAutoFix: () => void;
   isOptimizing: boolean;
   analysisMode: 'jd' | 'general';
+  isDarkMode: boolean;
 }
 
-export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, onEditResume, onAutoFix, isOptimizing, analysisMode }) => {
+export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, onEditResume, onAutoFix, isOptimizing, analysisMode, isDarkMode }) => {
   const [activeTab, setActiveTab] = useState<'suggestions' | 'keywords'>('suggestions');
 
   // SVG Chart Logic
@@ -20,15 +21,15 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
   const strokeDashoffset = circumference - (score / 100) * circumference;
   
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-emerald-400'; 
-    if (score >= 60) return 'text-yellow-400'; 
+    if (score >= 80) return 'text-emerald-500'; 
+    if (score >= 60) return 'text-yellow-500'; 
     return 'text-rose-500'; 
   };
 
   const getScoreStroke = (score: number) => {
-    if (score >= 80) return '#34d399'; 
-    if (score >= 60) return '#facc15'; 
-    return '#f43f5e'; 
+    if (score >= 80) return '#10b981'; // emerald-500
+    if (score >= 60) return '#eab308'; // yellow-500
+    return '#f43f5e'; // rose-500
   };
 
   const isGeneral = analysisMode === 'general';
@@ -44,9 +45,10 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
       {/* Left Column: Score & Quality */}
       <div className="lg:col-span-1 space-y-6">
         {/* ATS Score Card */}
-        <div className="bg-slate-900/60 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-slate-700/50 flex flex-col items-center relative overflow-hidden">
+        <div className={`backdrop-blur-md p-6 rounded-2xl shadow-xl border flex flex-col items-center relative overflow-hidden transition-colors duration-300
+          ${isDarkMode ? 'bg-slate-900/60 border-slate-700/50' : 'bg-white/80 border-slate-200'}`}>
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
-          <h2 className="text-lg font-semibold text-slate-100 mb-6 tracking-wide">
+          <h2 className={`text-lg font-semibold mb-6 tracking-wide ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>
             {isGeneral ? "Resume Strength" : "ATS Match Score"}
           </h2>
           
@@ -57,7 +59,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
                 cx="50"
                 cy="50"
                 r={radius}
-                stroke="#1e293b"
+                stroke={isDarkMode ? '#1e293b' : '#e2e8f0'} // slate-800 vs slate-200
                 strokeWidth="6"
                 fill="transparent"
               />
@@ -72,18 +74,18 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
                 strokeDasharray={circumference}
                 strokeDashoffset={strokeDashoffset}
                 strokeLinecap="round"
-                className="transition-all duration-1000 ease-out drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]"
+                className={`transition-all duration-1000 ease-out ${isDarkMode ? 'drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]' : 'drop-shadow-[0_0_10px_rgba(0,0,0,0.1)]'}`}
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className={`text-4xl font-bold ${getScoreColor(score)} drop-shadow-md`}>
                 {score}
               </span>
-              <span className="text-xs text-slate-400 font-medium uppercase tracking-wide mt-1">Out of 100</span>
+              <span className={`text-xs font-medium uppercase tracking-wide mt-1 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>Out of 100</span>
             </div>
           </div>
 
-          <p className="text-center text-sm text-slate-300 mt-4 px-4 font-medium leading-relaxed">
+          <p className={`text-center text-sm mt-4 px-4 font-medium leading-relaxed ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             {score >= 80 ? (isGeneral ? "Strong resume! Professional and impactful." : "Excellent match! Your resume is well-optimized.") : 
              score >= 60 ? (isGeneral ? "Solid foundation, but has room for improvement." : "Good foundation, but needs specific tailoring.") : 
              (isGeneral ? "Needs work on clarity, impact, or formatting." : "Significant gaps found for this role.")}
@@ -91,8 +93,9 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
         </div>
 
         {/* Quality Breakdown */}
-        <div className="bg-slate-900/60 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-slate-700/50">
-          <h3 className="text-md font-semibold text-slate-100 mb-5 flex items-center">
+        <div className={`backdrop-blur-md p-6 rounded-2xl shadow-xl border transition-colors duration-300
+           ${isDarkMode ? 'bg-slate-900/60 border-slate-700/50' : 'bg-white/80 border-slate-200'}`}>
+          <h3 className={`text-md font-semibold mb-5 flex items-center ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>
             <Star className="w-4 h-4 mr-2 text-indigo-400" /> Quality Metrics
           </h3>
           <div className="space-y-6">
@@ -103,16 +106,17 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
               return (
                 <div key={key}>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-slate-300 capitalize tracking-wide">{key}</span>
-                    <span className="text-xs text-slate-500 font-mono">{normalizedScore}/10</span>
+                    <span className={`text-sm font-medium capitalize tracking-wide ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>{key}</span>
+                    <span className={`text-xs font-mono ${isDarkMode ? 'text-slate-500' : 'text-slate-400'}`}>{normalizedScore}/10</span>
                   </div>
-                  <div className="w-full bg-slate-800 rounded-full h-1.5 mb-3 overflow-hidden">
+                  <div className={`w-full rounded-full h-1.5 mb-3 overflow-hidden ${isDarkMode ? 'bg-slate-800' : 'bg-slate-200'}`}>
                     <div 
-                      className="h-1.5 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(255,255,255,0.2)]" 
-                      style={{ width: `${barWidth}%`, backgroundColor: normalizedScore > 7 ? '#34d399' : normalizedScore > 4 ? '#facc15' : '#f43f5e' }}
+                      className={`h-1.5 rounded-full transition-all duration-1000 ${isDarkMode ? 'shadow-[0_0_10px_rgba(255,255,255,0.2)]' : ''}`} 
+                      style={{ width: `${barWidth}%`, backgroundColor: normalizedScore > 7 ? '#10b981' : normalizedScore > 4 ? '#eab308' : '#f43f5e' }}
                     ></div>
                   </div>
-                  <p className="text-xs text-slate-400 bg-slate-800/50 p-2.5 rounded border border-slate-700/50 leading-relaxed italic">
+                  <p className={`text-xs p-2.5 rounded border leading-relaxed italic
+                    ${isDarkMode ? 'bg-slate-800/50 border-slate-700/50 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-600'}`}>
                     "{metric.feedback}"
                   </p>
                 </div>
@@ -126,14 +130,15 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
       <div className="lg:col-span-2 space-y-6 flex flex-col">
         
         {/* Executive Summary */}
-        <div className="bg-slate-900/60 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-slate-700/50">
+        <div className={`backdrop-blur-md p-6 rounded-2xl shadow-xl border transition-colors duration-300
+           ${isDarkMode ? 'bg-slate-900/60 border-slate-700/50' : 'bg-white/80 border-slate-200'}`}>
           <div className="flex items-center mb-4">
-            <div className="p-2 bg-indigo-500/10 rounded-lg mr-3 border border-indigo-500/20">
-              <FileText className="w-5 h-5 text-indigo-400" />
+            <div className={`p-2 rounded-lg mr-3 border ${isDarkMode ? 'bg-indigo-500/10 border-indigo-500/20' : 'bg-indigo-50 border-indigo-200'}`}>
+              <FileText className="w-5 h-5 text-indigo-500" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-100">Executive Summary</h3>
+            <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>Executive Summary</h3>
           </div>
-          <p className="text-slate-300 leading-relaxed text-base">
+          <p className={`leading-relaxed text-base ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
             {result.summary}
           </p>
         </div>
@@ -173,29 +178,37 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
           
           <button 
             onClick={onEditResume}
-            className="group flex items-center justify-center p-4 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-slate-600 rounded-xl font-semibold transition-all shadow-lg"
+            className={`group flex items-center justify-center p-4 border rounded-xl font-semibold transition-all shadow-lg
+              ${isDarkMode 
+                ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700 hover:border-slate-600' 
+                : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'}`}
           >
-            <div className="p-1.5 bg-slate-700 rounded-lg mr-3 group-hover:bg-slate-600 transition-colors">
-               <Edit className="w-5 h-5 text-slate-300" />
+            <div className={`p-1.5 rounded-lg mr-3 transition-colors ${isDarkMode ? 'bg-slate-700 group-hover:bg-slate-600' : 'bg-slate-100 group-hover:bg-slate-200'}`}>
+               <Edit className={`w-5 h-5 ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`} />
             </div>
             <span>Open Live Editor</span>
           </button>
         </div>
 
         {/* Tabs Container */}
-        <div className="bg-slate-900/60 backdrop-blur-md rounded-2xl shadow-xl border border-slate-700/50 overflow-hidden flex flex-col h-[600px]">
-          <div className="border-b border-slate-700/50 overflow-x-auto shrink-0 bg-slate-900/50">
+        <div className={`backdrop-blur-md rounded-2xl shadow-xl border overflow-hidden flex flex-col h-[600px] transition-colors duration-300
+           ${isDarkMode ? 'bg-slate-900/60 border-slate-700/50' : 'bg-white/80 border-slate-200'}`}>
+          <div className={`border-b overflow-x-auto shrink-0 ${isDarkMode ? 'border-slate-700/50 bg-slate-900/50' : 'border-slate-200 bg-slate-50'}`}>
             <nav className="flex space-x-8 px-6 min-w-max" aria-label="Tabs">
               <button
                 onClick={() => setActiveTab('suggestions')}
                 className={`py-4 px-1 inline-flex items-center border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'suggestions'
-                    ? 'border-indigo-500 text-indigo-400'
-                    : 'border-transparent text-slate-500 hover:text-slate-300 hover:border-slate-700'
+                    ? 'border-indigo-500 text-indigo-500'
+                    : `border-transparent hover:border-slate-300 ${isDarkMode ? 'text-slate-500 hover:text-slate-300' : 'text-slate-500 hover:text-slate-700'}`
                 }`}
               >
                 {isGeneral ? "Improvements" : "Tailoring Suggestions"}
-                <span className={`ml-2 py-0.5 px-2.5 rounded-full text-xs font-semibold ${activeTab === 'suggestions' ? 'bg-indigo-500/20 text-indigo-300' : 'bg-slate-800 text-slate-500'}`}>
+                <span className={`ml-2 py-0.5 px-2.5 rounded-full text-xs font-semibold ${
+                  activeTab === 'suggestions' 
+                  ? (isDarkMode ? 'bg-indigo-500/20 text-indigo-300' : 'bg-indigo-100 text-indigo-600') 
+                  : (isDarkMode ? 'bg-slate-800 text-slate-500' : 'bg-slate-200 text-slate-600')
+                }`}>
                   {result.suggestions.length}
                 </span>
               </button>
@@ -203,12 +216,16 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
                 onClick={() => setActiveTab('keywords')}
                 className={`py-4 px-1 inline-flex items-center border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'keywords'
-                    ? 'border-indigo-500 text-indigo-400'
-                    : 'border-transparent text-slate-500 hover:text-slate-300 hover:border-slate-700'
+                    ? 'border-indigo-500 text-indigo-500'
+                    : `border-transparent hover:border-slate-300 ${isDarkMode ? 'text-slate-500 hover:text-slate-300' : 'text-slate-500 hover:text-slate-700'}`
                 }`}
               >
                 {isGeneral ? "Missing Elements" : "Missing Keywords"}
-                <span className={`ml-2 py-0.5 px-2.5 rounded-full text-xs font-semibold ${activeTab === 'keywords' ? 'bg-rose-500/20 text-rose-300' : 'bg-slate-800 text-slate-500'}`}>
+                <span className={`ml-2 py-0.5 px-2.5 rounded-full text-xs font-semibold ${
+                  activeTab === 'keywords' 
+                  ? (isDarkMode ? 'bg-rose-500/20 text-rose-300' : 'bg-rose-100 text-rose-600') 
+                  : (isDarkMode ? 'bg-slate-800 text-slate-500' : 'bg-slate-200 text-slate-600')
+                }`}>
                   {result.missingKeywords.length}
                 </span>
               </button>
@@ -225,12 +242,15 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
                   </div>
                 ) : (
                   result.suggestions.map((suggestion) => (
-                    <div key={suggestion.id} className="bg-slate-800/50 border border-slate-700 rounded-xl p-5 hover:border-indigo-500/50 transition-colors shadow-sm group">
+                    <div key={suggestion.id} className={`border rounded-xl p-5 hover:border-indigo-500/50 transition-colors shadow-sm group
+                       ${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-white border-slate-200'}`}>
                       <div className="flex justify-between items-start mb-4">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold capitalize tracking-wide border
-                          ${suggestion.impact === 'high' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 
-                            suggestion.impact === 'medium' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 
-                            'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
+                          ${suggestion.impact === 'high' 
+                            ? (isDarkMode ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-rose-50 text-rose-600 border-rose-200') : 
+                            suggestion.impact === 'medium' 
+                            ? (isDarkMode ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-amber-50 text-amber-600 border-amber-200') : 
+                            (isDarkMode ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-600 border-emerald-200')}`}>
                           {suggestion.impact} Impact • {suggestion.type}
                         </span>
                       </div>
@@ -240,7 +260,8 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
                           <h5 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center">
                             Original
                           </h5>
-                          <div className="text-slate-400 bg-slate-900/50 p-4 rounded-lg text-sm border-l-2 border-slate-600 italic">
+                          <div className={`p-4 rounded-lg text-sm border-l-2 italic
+                            ${isDarkMode ? 'text-slate-400 bg-slate-900/50 border-slate-600' : 'text-slate-600 bg-slate-50 border-slate-300'}`}>
                             "{suggestion.originalText}"
                           </div>
                         </div>
@@ -250,12 +271,14 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
                         <h5 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-2 flex items-center">
                           Suggested Change
                         </h5>
-                        <div className="text-slate-200 bg-indigo-500/10 p-4 rounded-lg text-sm border-l-2 border-indigo-500 font-medium">
+                        <div className={`p-4 rounded-lg text-sm border-l-2 border-indigo-500 font-medium
+                          ${isDarkMode ? 'text-slate-200 bg-indigo-500/10' : 'text-slate-800 bg-indigo-50'}`}>
                           "{suggestion.suggestedText}"
                         </div>
                       </div>
 
-                      <div className="mt-4 flex items-start text-sm text-slate-500 pt-2 border-t border-slate-700/50">
+                      <div className={`mt-4 flex items-start text-sm pt-2 border-t
+                        ${isDarkMode ? 'text-slate-500 border-slate-700/50' : 'text-slate-500 border-slate-100'}`}>
                         <AlertCircle className="w-4 h-4 mr-2 mt-0.5 text-indigo-400 flex-shrink-0" />
                         <span>{suggestion.reason}</span>
                       </div>
@@ -267,7 +290,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
 
             {activeTab === 'keywords' && (
               <div>
-                <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+                <p className={`text-sm mb-6 leading-relaxed ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                   {isGeneral 
                     ? "The following elements or specific skills appear to be missing or underrepresented. Consider adding these to enhance your professional presentation." 
                     : "The following keywords appear frequently in the job description but are missing from your resume. Try to incorporate these naturally."}
@@ -277,7 +300,10 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ result, on
                      <span className="text-slate-500 italic">No missing keywords detected.</span>
                   ) : (
                     result.missingKeywords.map((keyword, idx) => (
-                      <span key={idx} className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-rose-500/10 text-rose-300 border border-rose-500/20 shadow-sm transition-colors cursor-default hover:bg-rose-500/20">
+                      <span key={idx} className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium border shadow-sm transition-colors cursor-default
+                         ${isDarkMode 
+                           ? 'bg-rose-500/10 text-rose-300 border-rose-500/20 hover:bg-rose-500/20' 
+                           : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'}`}>
                         <AlertCircle className="w-4 h-4 mr-2" />
                         {keyword}
                       </span>
