@@ -1,0 +1,5 @@
+{
+  "name": "ResumeTailor AI",
+  "description": "An intelligent resume optimization tool that parses your resume, scores it against a job description, and provides actionable, ATS-friendly tailoring suggestions.",
+  "requestFramePermissions": []
+}
