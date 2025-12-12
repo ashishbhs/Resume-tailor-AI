@@ -1,20 +1,47 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# ResumeTailor AI
 
-# Run and deploy your AI Studio app
+An intelligent resume optimization tool powered by the Google Gemini API. This application parses your resume, scores it against a specific job description, and provides actionable, ATS-friendly tailoring suggestions to help you land your dream job.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/drive/1pblrmM0jRauJSv9KFNIy0iQbY95UrJZ6
+*   **Resume Parsing**: Instantly extracts text from PDF, DOCX, and TXT files.
+*   **Smart Analysis**: Scores your resume against Job Descriptions (JD) or performs a general best-practice audit.
+*   **ATS Scoring**: Calculates a strict match score based on keywords, clarity, and relevance.
+*   **Auto-Optimization**: Uses GenAI to rewrite bullet points and insert missing keywords automatically.
+*   **Gap Analysis & Study Plan**: Generates a custom study plan for skills added by the AI to ensure you are interview-ready.
+*   **Live Editor**: Polish the optimized resume with a built-in Markdown editor.
+*   **Theme Support**: Beautiful UI with toggleable Dark and Light modes.
 
-## Run Locally
+## Tech Stack
 
-**Prerequisites:**  Node.js
+*   **Frontend**: React 19, TypeScript, Tailwind CSS
+*   **AI Model**: Google Gemini 2.5 Flash (`@google/genai` SDK)
+*   **Styling**: Custom CSS animations and Tailwind utility classes
 
+## Getting Started
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/yourusername/resume-tailor-ai.git
+    cd resume-tailor-ai
+    ```
+
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
+
+3.  **Set up Environment Variables**
+    Ensure you have a valid Google Gemini API Key available in `process.env.API_KEY`.
+
+4.  **Run the application**
+    ```bash
+    npm start
+    ```
+
+## Usage
+
+1.  **Upload**: Drag and drop your resume file.
+2.  **Context**: Paste the target Job Description.
+3.  **Analyze**: Get an instant score and detailed breakdown of strengths and weaknesses.
+4.  **Optimize**: Click "Auto-Optimize" to let AI fix gaps, then review the "Study Plan" tab to prepare for your interview.
