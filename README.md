@@ -36,7 +36,7 @@ An intelligent resume optimization tool powered by the Google Gemini API. This a
 
 4.  **Run the application**
     ```bash
-    npm start
+    npm run dev
     ```
 
 ## Usage
